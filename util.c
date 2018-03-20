@@ -730,12 +730,10 @@ bool fulltest(const uint32_t *hash, const uint32_t *target)
 		if(i==7)
 		{
 			if (((hash[i] /*& 0x80000000*/) ^ 0x80000000) > target[i]) {
-				//printf("h: %x, h^: %x, t: %x\n", hash[i], ((hash[i] & 0x80000000)), target[i]);
 				rc = false;
 				break;
 			}
 			if (((hash[i] /*& 0x80000000*/) ^ 0x80000000) < target[i]) {
-				printf("ok h: %x, h^: %x, t: %x\n", hash[i], (hash[i] ^ 0x80000000), target[i]);
 				rc = true;
 				break;
 			}
@@ -746,7 +744,7 @@ bool fulltest(const uint32_t *hash, const uint32_t *target)
 				rc = false;
 				break;
 			}
-			if (hash[i] <= target[i]) {
+			if (hash[i] < target[i]) {
 				rc = true;
 				break;
 			}
@@ -756,7 +754,7 @@ bool fulltest(const uint32_t *hash, const uint32_t *target)
 	if (opt_debug) {
 		uint32_t hash_be[8], target_be[8];
 		char hash_str[65], target_str[65];
-		
+
 		for (i = 0; i < 8; i++) {
 			be32enc(hash_be + i, hash[7 - i]);
 			be32enc(target_be + i, target[7 - i]);
@@ -764,14 +762,11 @@ bool fulltest(const uint32_t *hash, const uint32_t *target)
 		bin2hex(hash_str, (unsigned char *)hash_be, 32);
 		bin2hex(target_str, (unsigned char *)target_be, 32);
 
-		//bin2hex(hash_str, (unsigned char *)hash, 32);
-		//bin2hex(target_str, (unsigned char *)target, 32);
-
-		/*applog(LOG_DEBUG, "DEBUG: %s\nHash:   %s\nTarget: %s",
+		applog(LOG_DEBUG, "DEBUG: %s\nHash:   %s\nTarget: %s",
 			rc ? "hash <= target"
 			   : "hash > target (false positive)",
 			hash_str,
-			target_str);*/
+			target_str);
 	}
 
 	return rc;
@@ -781,7 +776,7 @@ void diff_to_target(uint32_t *target, double diff)
 {
 	uint64_t m;
 	int k;
-	
+
 	for (k = 6; k > 0 && diff > 1.0; k--)
 		diff /= 4294967296.0;
 	m = 4294901760.0 / diff;
